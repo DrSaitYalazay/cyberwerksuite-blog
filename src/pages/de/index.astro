@@ -1,0 +1,46 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { useTranslations } from "../../i18n/ui";
+
+const lang = "de" as const;
+const t = useTranslations(lang);
+
+const posts = (await getCollection("de", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+---
+<BaseLayout
+  title="Blog — Cybersicherheit, Compliance & Governance"
+  description="Aktuelle Fachartikel zu NIS2, ISO 27001, BSI IT-Grundschutz, AI Governance, DORA und GDPR von CyberWerkSuite."
+>
+  <section class="bg-gradient-to-br from-primary via-primary to-primary-glow text-surface">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center space-y-4">
+      <span class="inline-block bg-accent/20 border border-accent/30 px-4 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm">
+        {t("hero.eyebrow")}
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight">{t("hero.title")}</h1>
+      <p class="max-w-2xl mx-auto text-surface/80 text-sm sm:text-base leading-relaxed">{t("hero.subtitle")}</p>
+    </div>
+  </section>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+    {posts.length === 0 ? (
+      <p class="text-center text-muted py-16">Bald verfügbar — erste Artikel werden in Kürze veröffentlicht.</p>
+    ) : (
+      <div class="grid gap-6 sm:grid-cols-2">
+        {posts.map((post, idx) => (
+          <PostCard
+            title={post.data.title}
+            description={post.data.description}
+            pubDate={post.data.pubDate}
+            tags={post.data.tags}
+            image={post.data.image}
+            href={`/de/${post.slug}/`}
+            featured={idx === 0}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+</BaseLayout>

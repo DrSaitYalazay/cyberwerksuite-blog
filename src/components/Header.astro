@@ -1,0 +1,38 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/ui";
+import CWSShield from "./CWSShield.astro";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const otherLang = lang === "de" ? "en" : "de";
+const otherPath = Astro.url.pathname.replace(/^\/(de|en)/, `/${otherLang}`) || `/${otherLang}/`;
+---
+<header class="sticky top-0 z-50 border-b border-border bg-surface/90 backdrop-blur-md">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex h-16 items-center justify-between">
+    <div class="flex items-center gap-4">
+      <a href={`/${lang}/`} class="flex items-center gap-2.5 group">
+        <CWSShield size={36} />
+        <div class="leading-tight">
+          <div class="font-extrabold text-primary text-sm tracking-wider">CWS</div>
+          <div class="text-[9px] text-muted font-semibold tracking-[0.18em] uppercase">
+            Cyber<span class="text-accent">Werk</span>Suite
+          </div>
+        </div>
+      </a>
+      <a href="https://www.cyberwerksuite.com" class="hidden sm:inline text-xs text-muted hover:text-accent transition-colors border-l border-border pl-4">
+        ← {t("nav.main")}
+      </a>
+    </div>
+
+    <nav class="flex items-center gap-3 sm:gap-5">
+      <a href={`/${lang}/`} class="text-sm font-medium text-muted hover:text-accent transition-colors">
+        {t("nav.blog")}
+      </a>
+      <a href="https://www.cyberwerksuite.com/tools" class="hidden sm:inline text-sm font-medium text-muted hover:text-accent transition-colors">
+        {t("nav.tools")}
+      </a>
+      <a href={otherPath} class="flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/5 px-3 py-1.5 text-xs font-bold text-accent hover:bg-accent/10 transition-colors">
+        {otherLang.toUpperCase()}
+      </a>
+    </nav>
+  </div>
+</header>

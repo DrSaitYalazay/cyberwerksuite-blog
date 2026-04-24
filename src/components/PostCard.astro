@@ -1,0 +1,40 @@
+---
+import { getLangFromUrl, useTranslations } from "../i18n/ui";
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+export interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  tags: string[];
+  href: string;
+  image?: string;
+  featured?: boolean;
+}
+const { title, description, pubDate, tags, href, image, featured = false } = Astro.props;
+const dateStr = pubDate.toLocaleDateString(lang === "de" ? "de-DE" : "en-US", {
+  year: "numeric", month: "short", day: "numeric"
+});
+---
+<a href={href} class={`group block rounded-2xl border border-border bg-surface overflow-hidden transition-all hover:shadow-lg hover:border-accent/40 ${featured ? "sm:col-span-2" : ""}`}>
+  <div class="h-1 bg-gradient-to-r from-primary via-accent to-primary/60"></div>
+  {image && (
+    <img src={image} alt="" loading="lazy" class={`w-full object-cover ${featured ? "h-56 sm:h-72" : "h-44"}`} />
+  )}
+  <div class={`p-6 ${featured ? "sm:p-8" : ""}`}>
+    <div class="flex flex-wrap gap-1.5 mb-3">
+      {tags.slice(0, 3).map((tag) => (
+        <span class="text-[10px] font-bold uppercase tracking-wider bg-accent/10 text-accent px-2 py-0.5 rounded-full">{tag}</span>
+      ))}
+    </div>
+    <h2 class={`font-bold text-ink mb-2 group-hover:text-accent transition-colors ${featured ? "text-2xl" : "text-lg"}`}>
+      {title}
+    </h2>
+    <p class="text-sm text-muted leading-relaxed mb-4">{description}</p>
+    <div class="flex items-center justify-between pt-3 border-t border-border/60 text-xs">
+      <span class="text-muted">{dateStr}</span>
+      <span class="font-semibold text-accent opacity-0 group-hover:opacity-100 transition-opacity">{t("post.readMore")} →</span>
+    </div>
+  </div>
+</a>

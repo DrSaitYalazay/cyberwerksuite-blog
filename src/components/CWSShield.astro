@@ -1,0 +1,12 @@
+---
+// Mirror of the main site's CWS shield logo (compact, inline SVG)
+export interface Props {
+  size?: number;
+  class?: string;
+}
+const { size = 32, class: className = "" } = Astro.props;
+---
+<svg width={size} height={size} viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" class={className} aria-hidden="true">
+  <path d="M32 4L6 16V32C6 48 32 60 32 60C32 60 58 48 58 32V16L32 4Z" fill="hsl(220 65% 20%)" stroke="hsl(25 80% 50%)" stroke-width="3"/>
+  <text x="32" y="38" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="16" fill="hsl(25 80% 50%)">CWS</text>
+</svg>

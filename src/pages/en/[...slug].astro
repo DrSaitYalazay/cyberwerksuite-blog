@@ -1,0 +1,77 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../i18n/ui";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("en", ({ data }) => !data.draft);
+  return posts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+interface Props { post: CollectionEntry<"en"> }
+const { post } = Astro.props;
+const { Content } = await post.render();
+const t = useTranslations("en");
+const dateStr = post.data.pubDate.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+---
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  image={post.data.image}
+  type="article"
+  publishedAt={post.data.pubDate.toISOString()}
+  tags={post.data.tags}
+>
+  <article class="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+    <a href="/en/" class="inline-flex items-center gap-2 text-sm text-muted hover:text-accent mb-6">← {t("post.back")}</a>
+
+    <header class="mb-8 space-y-4">
+      <div class="flex flex-wrap gap-1.5">
+        {post.data.tags.map((tag) => (
+          <span class="text-[10px] font-bold uppercase tracking-wider bg-accent/10 text-accent px-2 py-0.5 rounded-full">{tag}</span>
+        ))}
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight leading-tight">{post.data.title}</h1>
+      <p class="text-lg text-muted leading-relaxed">{post.data.description}</p>
+
+      {post.data.author && (
+        <div class="flex items-start gap-3 pt-3 border-t border-border">
+          <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-glow flex items-center justify-center text-surface font-bold text-sm shrink-0">
+            {post.data.author.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+          </div>
+          <div class="text-xs leading-relaxed">
+            <div class="font-semibold text-ink text-sm">{post.data.author}</div>
+            {post.data.authorTitle && <div class="text-muted">{post.data.authorTitle}</div>}
+            {post.data.authorRole && <div class="text-muted italic mt-0.5">{post.data.authorRole}</div>}
+          </div>
+        </div>
+      )}
+
+      <p class="text-xs text-muted">{t("post.published")} {dateStr}</p>
+      {post.data.image && <img src={post.data.image} alt="" class="w-full h-64 object-cover rounded-xl mt-4" />}
+    </header>
+
+    <div class="prose-cws">
+      <Content />
+    </div>
+
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": post.data.title,
+      "description": post.data.description,
+      "datePublished": post.data.pubDate.toISOString(),
+      "author": post.data.author
+        ? { "@type": "Person", "name": post.data.author, "jobTitle": post.data.authorTitle ?? undefined }
+        : { "@type": "Organization", "name": "CyberWerkSuite", "url": "https://www.cyberwerksuite.com" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "CyberWerkSuite",
+        "logo": { "@type": "ImageObject", "url": "https://www.cyberwerksuite.com/favicon.svg" }
+      },
+      "mainEntityOfPage": { "@type": "WebPage", "@id": new URL(Astro.url.pathname, Astro.site).toString() },
+      "inLanguage": "en-US",
+      "keywords": post.data.tags.join(", "),
+    })} />
+  </article>
+</BaseLayout>

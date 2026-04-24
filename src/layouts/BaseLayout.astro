@@ -1,0 +1,161 @@
+---
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import { getLangFromUrl, useTranslations } from "../i18n/ui";
+
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  type?: "website" | "article";
+  publishedAt?: string;
+  tags?: string[];
+}
+
+const { title, description, image, type = "website", publishedAt, tags = [] } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const ogImage = image
+  ? new URL(image, Astro.site).toString()
+  : new URL("/og-default.jpg", Astro.site).toString();
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} — CyberWerkSuite Blog</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    {/* Hreflang for SEO */}
+    <link rel="alternate" hreflang="de" href={new URL(Astro.url.pathname.replace(/^\/(de|en)/, "/de"), Astro.site).toString()} />
+    <link rel="alternate" hreflang="en" href={new URL(Astro.url.pathname.replace(/^\/(de|en)/, "/en"), Astro.site).toString()} />
+    <link rel="alternate" hreflang="x-default" href={new URL(Astro.url.pathname.replace(/^\/(de|en)/, "/de"), Astro.site).toString()} />
+
+    {/* Open Graph */}
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:site_name" content="CyberWerkSuite" />
+    <meta property="og:locale" content={lang === "de" ? "de_DE" : "en_US"} />
+    {publishedAt && <meta property="article:published_time" content={publishedAt} />}
+    {tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+    {/* Twitter */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    {/* RSS */}
+    <link rel="alternate" type="application/rss+xml" title="CyberWerkSuite Blog (DE)" href="/rss-de.xml" />
+    <link rel="alternate" type="application/rss+xml" title="CyberWerkSuite Blog (EN)" href="/rss-en.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  </head>
+  <body class="bg-surface text-ink antialiased font-sans flex flex-col min-h-screen">
+    <Header />
+    <main class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+
+    {/* Floating navigation buttons */}
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col gap-3">
+      <button
+        id="scroll-to-return"
+        aria-label={lang === "de" ? "Zurück zur vorherigen Position" : "Return to previous position"}
+        title={lang === "de" ? "Zurück zur vorherigen Position" : "Return to previous position"}
+        class="w-12 h-12 rounded-full bg-primary text-white shadow-lg flex items-center justify-center opacity-0 translate-y-4 pointer-events-none transition-all duration-300 hover:scale-110 hover:shadow-xl"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 14L4 9l5-5"/>
+          <path d="M4 9h11a5 5 0 0 1 5 5v0a5 5 0 0 1-5 5H9"/>
+        </svg>
+      </button>
+      <button
+        id="scroll-to-top"
+        aria-label={lang === "de" ? "Nach oben scrollen" : "Scroll to top"}
+        title={lang === "de" ? "Nach oben scrollen" : "Scroll to top"}
+        class="w-12 h-12 rounded-full bg-accent text-white shadow-lg flex items-center justify-center opacity-0 translate-y-4 pointer-events-none transition-all duration-300 hover:scale-110 hover:shadow-xl"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 19V5M5 12l7-7 7 7"/>
+        </svg>
+      </button>
+    </div>
+
+    <script is:inline>
+      (function () {
+        const topBtn = document.getElementById("scroll-to-top");
+        const returnBtn = document.getElementById("scroll-to-return");
+        if (!topBtn || !returnBtn) return;
+
+        let lastPosition = null;
+        let returnTimer = null;
+        const JUMP_THRESHOLD = 200;
+        const SHOW_DURATION = 30000;
+
+        const show = (btn) => {
+          btn.classList.remove("opacity-0", "translate-y-4", "pointer-events-none");
+          btn.classList.add("opacity-100", "translate-y-0");
+        };
+        const hide = (btn) => {
+          btn.classList.add("opacity-0", "translate-y-4", "pointer-events-none");
+          btn.classList.remove("opacity-100", "translate-y-0");
+        };
+
+        // Capture position before any in-page anchor click (footnotes, headings, TOC)
+        document.addEventListener("click", (e) => {
+          const link = e.target.closest && e.target.closest('a[href^="#"]');
+          if (!link) return;
+          const href = link.getAttribute("href");
+          if (!href || href === "#") return;
+          lastPosition = window.scrollY;
+          setTimeout(() => {
+            if (lastPosition !== null && Math.abs(window.scrollY - lastPosition) > JUMP_THRESHOLD) {
+              show(returnBtn);
+              if (returnTimer) clearTimeout(returnTimer);
+              returnTimer = setTimeout(() => { hide(returnBtn); lastPosition = null; }, SHOW_DURATION);
+            }
+          }, 400);
+        }, true);
+
+        const onScroll = () => {
+          if (window.scrollY > 400) show(topBtn); else hide(topBtn);
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+
+        topBtn.addEventListener("click", () => {
+          const prev = window.scrollY;
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          setTimeout(() => {
+            if (prev > 400) {
+              lastPosition = prev;
+              show(returnBtn);
+              if (returnTimer) clearTimeout(returnTimer);
+              returnTimer = setTimeout(() => { hide(returnBtn); lastPosition = null; }, SHOW_DURATION);
+            }
+          }, 600);
+        });
+
+        returnBtn.addEventListener("click", () => {
+          if (lastPosition === null) return;
+          window.scrollTo({ top: lastPosition, behavior: "smooth" });
+          hide(returnBtn);
+          lastPosition = null;
+          if (returnTimer) clearTimeout(returnTimer);
+        });
+      })();
+    </script>
+  </body>
+</html>
