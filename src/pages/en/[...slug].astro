@@ -13,6 +13,7 @@ const { post } = Astro.props;
 const { Content } = await post.render();
 const t = useTranslations("en");
 const dateStr = post.data.pubDate.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+import NewsletterSignup from '../../components/NewsletterSignup.astro';
 ---
 <BaseLayout
   title={post.data.title}
@@ -74,4 +75,5 @@ const dateStr = post.data.pubDate.toLocaleDateString("en-US", { year: "numeric",
       "keywords": post.data.tags.join(", "),
     })} />
   </article>
+  <NewsletterSignup />
 </BaseLayout>
