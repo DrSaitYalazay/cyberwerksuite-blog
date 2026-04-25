@@ -1,0 +1,18 @@
+---
+const { pathname } = Astro.url;
+const isGerman = pathname.startsWith('/de/');
+const formId = isGerman ? 'bP7CBx' : 'waDWvK';
+---
+
+<section class="newsletter-signup">
+  <div class={`ml-embedded`} data-form={formId}></div>
+</section>
+
+<style>
+  .newsletter-signup {
+    max-width: 65ch;
+    margin: 3rem auto 0;
+    padding-top: 2rem;
+    border-top: 1px solid hsl(0 0% 0% / 0.1);
+  }
+</style>
