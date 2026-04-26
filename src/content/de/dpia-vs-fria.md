@@ -162,7 +162,7 @@ Die LinkedIn-Vergleichs-Infografiken sind ein passabler Awareness-Einstieg. Aber
 
 ---
 
-**Wie verläuft das FRIA-Scoping-Gespräch in Ihrer Organisation?** Mich interessiert besonders, wie DACH-Unternehmen die Deployer-Kategorienfrage nach Art. 27 mappen — hinterlassen Sie einen Kommentar mit Ihrer Einschätzung oder [schreiben Sie mir auf LinkedIn](https://linkedin.com/in/dr-sait-yalazay), wenn Sie es lieber nicht öffentlich diskutieren möchten.
+**Wie verläuft das FRIA-Scoping-Gespräch in Ihrer Organisation?** Mich interessiert besonders, wie DACH-Unternehmen die Deployer-Kategorienfrage nach Art. 27 mappen — hinterlassen Sie einen Kommentar mit Ihrer Einschätzung oder [schreiben Sie mir auf LinkedIn](https://www.linkedin.com/in/dr-sait-yalazay-7b71391a/), wenn Sie es lieber nicht öffentlich diskutieren möchten.
 
 ---
 
