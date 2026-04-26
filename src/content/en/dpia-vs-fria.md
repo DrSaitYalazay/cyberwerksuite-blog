@@ -162,7 +162,7 @@ The LinkedIn comparison infographics are a decent awareness starter. But a legal
 
 ---
 
-**How is your organization's FRIA scoping conversation going?** I'm particularly interested in how DACH companies are mapping the deployer-category question under Article 27 — drop a comment with your take, or [send me a message on LinkedIn](https://linkedin.com/in/dr-sait-yalazay) if you'd rather not discuss it in public.
+**How is your organization's FRIA scoping conversation going?** I'm particularly interested in how DACH companies are mapping the deployer-category question under Article 27 — drop a comment with your take, or [send me a message on LinkedIn](https://www.linkedin.com/in/dr-sait-yalazay-7b71391a/) if you'd rather not discuss it in public.
 
 ---
 
